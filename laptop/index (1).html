@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Proyecto laptop</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <script>
+      // Crear una escena
+      var scene = new THREE.Scene()
+
+      // Crear una cámara
+      var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      )
+      camera.position.z = 5
+
+      // Crear un renderizador
+      var renderer = new THREE.WebGLRenderer()
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      document.body.appendChild(renderer.domElement)
+
+      // Crear dos cuadrados perpendiculares
+      var squareGeometry = new THREE.BoxGeometry(1, 1, 0.1)
+      var squareGeometry2 = new THREE.BoxGeometry(1, 0.1, 0.5)
+      var squareMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc })
+      var square1 = new THREE.Mesh(squareGeometry, squareMaterial)
+      var square2 = new THREE.Mesh(squareGeometry2, squareMaterial)
+      square2.rotation.y = Math.PI / 2 // Girar el segundo cuadrado 90 grados en el eje y
+      square1.position.x = 0.5 // Posicionar el primer cuadrado a la derecha
+      square2.position.x = 0 // Posicionar el segundo cuadrado a la izquierda
+      square1.position.y = 0.5 // Levantar el primer cuadrado medio unitario en el eje y
+      square2.position.y = -0.5 // Levantar el segundo cuadrado medio unitario en el eje y
+      square2.position.z = -0.5 // Levantar el segundo cuadrado medio unitario en el eje y
+      scene.add(square1)
+      square1.add(square2)
+
+      renderer.setSize(window.innerWidth, window.innerHeight)
+      document.body.appendChild(renderer.domElement)
+
+      // Crear una pantalla turquesa
+      var tecladoGeometry = new THREE.BoxGeometry(0.8, 0.6, 0.1)
+      var tecladoMaterial = new THREE.MeshBasicMaterial({ color: 0x00ffff })
+      var screen = new THREE.Mesh(tecladoGeometry, tecladoMaterial)
+      screen.position.set(0, 0, -0.05) // Posicionar la pantalla en el centro entre los cuadrados
+      square1.add(screen)
+
+      // Teclado
+      var tecladoGeometry = new THREE.BoxGeometry(0.6, 0.1, 0.8)
+      var tecladoMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 })
+      var teclado = new THREE.Mesh(tecladoGeometry, tecladoMaterial)
+      teclado.position.set(-0.2, -0.6, -0.4) // Posicionar la pantalla en el centro entre los cuadrados
+
+      square2.add(teclado)
+
+      // Controlador de teclado
+      var keyboard = {}
+
+      function handleKeyDown(event) {
+        keyboard[event.code] = true
+      }
+
+      function handleKeyUp(event) {
+        keyboard[event.code] = false
+      }
+
+      document.addEventListener("keydown", handleKeyDown)
+      document.addEventListener("keyup", handleKeyUp)
+
+      // Animar la escena
+      function animate() {
+        // Mover la cámara según las teclas presionadas
+        if (keyboard["ArrowUp"]) {
+          camera.position.z -= 0.1
+        }
+        if (keyboard["ArrowDown"]) {
+          camera.position.z += 0.1
+        }
+        if (keyboard["ArrowLeft"]) {
+          camera.position.x -= 0.1
+        }
+        if (keyboard["ArrowRight"]) {
+          camera.position.x += 0.1
+        }
+
+        // Actualizar la matriz de proyección de la cámara
+        camera.updateProjectionMatrix()
+
+        requestAnimationFrame(animate)
+        square1.rotation.y += 0.01 // Girar el modelo
+        square2.rotation.y += 0.01 // Girar el modelo
+        renderer.render(scene, camera)
+      }
+      animate()
+    </script>
+  </body>
+</html>
